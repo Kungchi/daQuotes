@@ -26,4 +26,8 @@ class MainPageAdapter(private var quoteList: MutableList<Quote>) : RecyclerView.
         quoteList.add(quote)
         notifyItemInserted(quoteList.size - 1) // 새 명언이 추가되면 업데이트
     }
+
+    fun getQuote(position: Int): Quote? {
+        return Quote(message = quoteList[position].message, author = quoteList[position].author)
+    }
 }

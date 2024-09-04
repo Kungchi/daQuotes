@@ -29,6 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityMainpageBinding
     private lateinit var mainPageAdapter: MainPageAdapter
+    private var currentQuote: Quote? = null // 현재 페이지의 명언을 저장
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +45,22 @@ class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                if (position == mainPageAdapter.itemCount - 1) {
+                currentQuote = mainPageAdapter.getQuote(position)
 
+                CoroutineScope(Dispatchers.IO).launch {
+                    var result = db.quoteDao().getSearch(currentQuote?.message)
+                    if(result != null) {
+                        withContext(Dispatchers.Main) {
+                            binding.likeBtn.setImageResource(R.drawable.red_like_24)
+                        }
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            binding.likeBtn.setImageResource(R.drawable.like_24)
+                        }
+                    }
+                }
+
+                if (position == mainPageAdapter.itemCount - 1) {
                     getQuotes()
                 }
             }
@@ -56,35 +71,33 @@ class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
         binding.navView.setNavigationItemSelectedListener(this)
 
-//        binding.shareBtn.setOnClickListener {
-//            val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
-//            intent.type = "text/plain"
-//            intent.putExtra(Intent.EXTRA_TEXT, "daily Quote\n\n${binding.quoteText.text}\n${binding.author.text}")
-//
-//            val chooserTitle = "친구에게 공유하기"
-//            startActivity(Intent.createChooser(intent, chooserTitle))
-//        }
-//
-//        binding.likeBtn.setOnClickListener {
-//            // 모든 필드를 올바르게 전달하여 객체 생성
-//            var quote = Quote(message = binding.quoteText.text.toString(), author = binding.author.text.toString())
-//            CoroutineScope(Dispatchers.IO).launch {
-//                var result = db.quoteDao().getSearch(binding.quoteText.text.toString())
-//                if(result != null) {
-//                    db.quoteDao().delete(quote.message)
-//                    Log.d("확인용", "결과가 있습니다. 그래서 DB에 제거합니다")
-//                    withContext(Dispatchers.Main) {
-//                        binding.likeBtn.setImageResource(R.drawable.like_24)
-//                    }
-//                } else {
-//                    db.quoteDao().insert(quote)
-//                    Log.d("확인용", "결과가 없습니다. 그래서 DB에 추가합니다")
-//                    withContext(Dispatchers.Main) {
-//                        binding.likeBtn.setImageResource(R.drawable.red_like_24)
-//                    }
-//                }
-//            }
-//        }
+        binding.shareBtn.setOnClickListener {
+            val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, "daily Quote\n\n${currentQuote?.message}\n- ${currentQuote?.author} -")
+
+            val chooserTitle = "친구에게 공유하기"
+            startActivity(Intent.createChooser(intent, chooserTitle))
+        }
+
+        binding.likeBtn.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                var result = db.quoteDao().getSearch(currentQuote?.message)
+                if(result != null) {
+                    db.quoteDao().delete(currentQuote?.message)
+                    Log.d("확인용", "결과가 있습니다. 그래서 DB에 제거합니다")
+                    withContext(Dispatchers.Main) {
+                        binding.likeBtn.setImageResource(R.drawable.like_24)
+                    }
+                } else {
+                    db.quoteDao().insert(currentQuote!!)
+                    Log.d("확인용", "결과가 없습니다. 그래서 DB에 추가합니다")
+                    withContext(Dispatchers.Main) {
+                        binding.likeBtn.setImageResource(R.drawable.red_like_24)
+                    }
+                }
+            }
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
