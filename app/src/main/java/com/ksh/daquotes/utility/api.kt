@@ -5,20 +5,15 @@ import retrofit2.Call
 import retrofit2.http.GET
 
 data class DTO(
-    @SerializedName("_id") val id: String,
-    @SerializedName("content") val content: String,
+    @SerializedName("message") val message: String,
     @SerializedName("author") val author: String,
-    @SerializedName("tags") val tags: List<String>,
-    @SerializedName("authorSlug") val authorSlug: String,
-    @SerializedName("length") val length: Int,
-    @SerializedName("dateAdded") val dateAdded: String,
-    @SerializedName("dateModified") val dateModified: String
+    @SerializedName("authorProfile") val authorProfile: String
 
 )
 
 interface api {
-    @GET("/quotes/random")
-    fun getQuote(): Call<List<DTO>>
+    @GET("/api/advice")
+    fun getQuote(): Call<DTO>
 }
 
 

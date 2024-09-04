@@ -4,19 +4,19 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/no.1"
-            android:title="1번"
+            android:title="일일 명언"
             android:checkable="true"
-            android:checked="false"/>
+            android:checked="true"/>
 
         <item
             android:id="@+id/no.2"
-            android:title="2번"
+            android:title="내가 찜한 명언"
             android:checkable="true"
             android:checked="false"/>
 
         <item
             android:id="@+id/no.3"
-            android:title="3번"
+            android:title="명언 챌린지"
             android:checkable="true"
             android:checked="false"/>
     </group>

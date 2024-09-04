@@ -51,6 +51,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     //room local DB
     implementation("androidx.room:room-runtime:2.6.1")
+    implementation ("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
     //레트로핏
     implementation("com.squareup.retrofit2:retrofit:2.11.0")

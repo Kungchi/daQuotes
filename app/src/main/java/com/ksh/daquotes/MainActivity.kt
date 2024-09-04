@@ -2,10 +2,7 @@ package com.ksh.daquotes
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.room.Room
 import com.ksh.daquotes.page.MainPageActivity
 import com.ksh.daquotes.utility.AppDatabase
