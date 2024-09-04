@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
-import com.ksh.daquotes.page.MainPageActivity
+import com.ksh.daquotes.page.MainPage.MainPageActivity
 import com.ksh.daquotes.utility.AppDatabase
 
 lateinit var db:AppDatabase

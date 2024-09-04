@@ -19,30 +19,16 @@
             layout="@layout/toolbar"
             android:id="@+id/toolbar"/>
 
-        <TextView
-            android:id="@+id/quote_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="25sp"
-            android:textColor="@color/black"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="200dp"/>
-
-        <TextView
-            android:id="@+id/author_"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="23sp"
-            android:textColor="@color/black"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"/>
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="16dp">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"/>
 
             <ImageButton
                 android:id="@+id/like_btn"
