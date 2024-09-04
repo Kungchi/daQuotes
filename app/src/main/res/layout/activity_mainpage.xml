@@ -5,7 +5,8 @@
     android:id="@+id/layoutDraw"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/PastelBlue">
+    android:background="@drawable/bacgroundimg">
+    <!--https://kr.freepik.com/free-vector/blank-white-notepaper-design_13311374.htm#fromView=keyword&page=1&position=1&uuid=ddaa0fdc-6940-429b-87c9-054b151ecd5b 작가 rawpixel.com 출처 Freepik -->
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -23,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="25sp"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:gravity="center"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="200dp"/>
@@ -33,10 +34,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="23sp"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:gravity="center"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <ImageButton
+                android:id="@+id/like_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginBottom="36dp"
+                android:src="@drawable/like_24"
+                android:background="@android:color/transparent"/>
+
+            <ImageButton
+                android:id="@+id/share_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/share_24"
+                android:background="@android:color/transparent"/>
+        </FrameLayout>
+
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView

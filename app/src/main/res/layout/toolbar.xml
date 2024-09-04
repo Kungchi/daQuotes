@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:elevation="4dp"
-    android:background="@color/PastelBlue"
+    android:background="@drawable/bacgroundimg"
     app:contentInsetStart="4dp">
+    <!--https://kr.freepik.com/free-vector/blank-white-notepaper-design_13311374.htm#fromView=keyword&page=1&position=1&uuid=ddaa0fdc-6940-429b-87c9-054b151ecd5b 작가 rawpixel.com 출처 Freepik -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,8 +23,8 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="10dp"
             android:background="#00FFFFFF"
-            android:src="@drawable/menu_24"
-            app:tint="@color/white" />
+            android:src="@drawable/menu_24_black"
+            app:tint="@color/black" />
     </LinearLayout>
 
 </androidx.appcompat.widget.Toolbar>

@@ -20,3 +20,5 @@ interface api {
     @GET("/quotes/random")
     fun getQuote(): Call<List<DTO>>
 }
+
+

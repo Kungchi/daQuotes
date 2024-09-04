@@ -1,5 +1,6 @@
 package com.ksh.daquotes.page
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -32,6 +33,14 @@ class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
         binding.navView.setNavigationItemSelectedListener(this)
 
+        binding.shareBtn.setOnClickListener {
+            val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, "일일 명언\n\n${binding.quoteText.text}\n${binding.author.text}")
+
+            val chooserTitle = "친구에게 공유하기"
+            startActivity(Intent.createChooser(intent, chooserTitle))
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -50,6 +59,7 @@ class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
     }
 
+    //명언 가져오는 함수
     private fun getQuotes() {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.quotable.io")
@@ -64,13 +74,12 @@ class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     response.body()?.let { quotes ->
                         for(quote in quotes) {
                             binding.quoteText.text = quote.content
-                            binding.author.text = quote.author
+                            binding.author.text = "- " + quote.author + " -"
                         }
                     }
 
                 }
             }
-
             override fun onFailure(call: Call<List<DTO>>, t: Throwable) {
                 Log.d("확인용", t.message.toString())
             }
