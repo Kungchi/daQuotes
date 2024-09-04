@@ -8,6 +8,13 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.ksh.daquotes.databinding.ActivityMainpageBinding
+import com.ksh.daquotes.utility.DTO
+import com.ksh.daquotes.utility.api
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityMainpageBinding
@@ -18,10 +25,13 @@ class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelec
         binding = ActivityMainpageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        getQuotes()
+
         binding.toolbar.ibToolbar.setOnClickListener {
             toggleDrawerLayout(binding.root)
         }
         binding.navView.setNavigationItemSelectedListener(this)
+
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -38,5 +48,32 @@ class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelec
         else {
             drawerLayout.closeDrawer(GravityCompat.START)
         }
+    }
+
+    private fun getQuotes() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.quotable.io")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val api = retrofit.create(api::class.java)
+
+        api.getQuote().enqueue(object : Callback<List<DTO>> {
+            override fun onResponse(call: Call<List<DTO>>, response: Response<List<DTO>>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { quotes ->
+                        for(quote in quotes) {
+                            binding.quoteText.text = quote.content
+                            binding.author.text = quote.author
+                        }
+                    }
+
+                }
+            }
+
+            override fun onFailure(call: Call<List<DTO>>, t: Throwable) {
+                Log.d("확인용", t.message.toString())
+            }
+        })
     }
 }
