@@ -56,4 +56,7 @@ dependencies {
     //레트로핏
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    //애드몹
+    implementation("com.google.android.gms:play-services-ads:23.3.0")
 }

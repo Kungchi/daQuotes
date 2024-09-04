@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.navigation.NavigationView
 import com.ksh.daquotes.R
 import com.ksh.daquotes.databinding.ActivityMainpageBinding
@@ -65,6 +67,10 @@ class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 }
             }
         })
+
+        MobileAds.initialize(this)
+        val ads = AdRequest.Builder().build()
+        binding.adView.loadAd(ads)
 
         binding.toolbar.ibToolbar.setOnClickListener {
             toggleDrawerLayout(binding.root)
