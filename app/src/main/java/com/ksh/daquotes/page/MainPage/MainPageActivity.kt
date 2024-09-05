@@ -3,6 +3,7 @@ package com.ksh.daquotes
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -15,6 +16,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.navigation.NavigationView
 import com.ksh.daquotes.databinding.ActivityMainpageBinding
+import com.ksh.daquotes.page.FavoritesPage.FavoritesFragment
 import com.ksh.daquotes.page.MainPage.MainPageFragment
 
 class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -73,7 +75,25 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        Log.d("사이드바 테스트", "onNavigationItemSelected: ${item.title}")
+        val currentFragment = this.supportFragmentManager.findFragmentById(R.id.fragment_container)
+
+        when (item.itemId) {
+            R.id.daily_quote -> {
+                if (currentFragment !is MainPageFragment) {
+                    loadFragment(MainPageFragment())
+                }
+            }
+            R.id.favorite_quote -> {
+                if (currentFragment !is FavoritesFragment) {
+                    loadFragment(FavoritesFragment())
+                }
+            }
+            R.id.quote_challenge -> {
+                Toast.makeText(applicationContext, "아직 미구현", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Drawer 닫기
         binding.layoutDraw.closeDrawers()
         return true
     }

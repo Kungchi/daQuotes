@@ -3,7 +3,7 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/no.1"
+            android:id="@+id/daily_quote"
             android:title="일일 명언"
             android:checkable="true"
             android:checked="true"
@@ -11,7 +11,7 @@
         <!--"https://www.flaticon.com/kr/free-icons/-" 책 박람회 아이콘">책 박람회 아이콘 제작자: Circlon Tech - Flaticon -->
 
         <item
-            android:id="@+id/no.2"
+            android:id="@+id/favorite_quote"
             android:title="내가 찜한 명언"
             android:checkable="true"
             android:checked="false"
@@ -19,7 +19,7 @@
         <!-- <a href="https://www.flaticon.com/kr/free-icons/" title="별 아이콘">별 아이콘 제작자: Pixel perfect - Flaticon</a> -->
 
         <item
-            android:id="@+id/no.3"
+            android:id="@+id/quote_challenge"
             android:title="명언 챌린지"
             android:checkable="true"
             android:checked="false"

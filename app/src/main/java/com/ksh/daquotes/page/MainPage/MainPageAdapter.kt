@@ -1,15 +1,15 @@
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.ksh.daquotes.databinding.ItemListBinding
+import com.ksh.daquotes.databinding.MainpageItemBinding
 import com.ksh.daquotes.utility.Quote
 
 class MainPageAdapter(private var quoteList: MutableList<Quote>) : RecyclerView.Adapter<MainPageAdapter.ViewHolder>() {
 
-    inner class ViewHolder(val binding: ItemListBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: MainpageItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = MainpageItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 

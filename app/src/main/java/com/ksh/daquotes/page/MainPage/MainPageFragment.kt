@@ -26,8 +26,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MainPageFragment : Fragment() {
-    private var _binding: FragmentMainpageBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentMainpageBinding
     private lateinit var mainPageAdapter: MainPageAdapter
     private var currentQuote: Quote? = null
 
@@ -35,7 +34,7 @@ class MainPageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMainpageBinding.inflate(inflater, container, false)
+        binding = FragmentMainpageBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -118,10 +117,5 @@ class MainPageFragment : Fragment() {
                 Log.d("확인용", t.message.toString())
             }
         })
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

@@ -15,7 +15,6 @@ data class Quote(
 interface QuoteDao {
     @Query("SELECT * FROM Quote")
     fun getAll(): List<Quote>
-
     @Query("SELECT * FROM Quote WHERE message = :message")
     fun getSearch(message: String?): Quote
     @Query("DELETE FROM Quote WHERE message = :message")
