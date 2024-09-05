@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">daquotes</string>
+    <string name="ad_ID">광고 아이디</string>
+    <string name="ad_banner">배너 광고 아이디</string>
+    <string name="ad_interstitial">전면 광고 아이디</string>
+
+    <string name="ad_testID">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="ad_testbanner">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ad_testinterstitial">ca-app-pub-3940256099942544/1033173712</string>
 </resources>

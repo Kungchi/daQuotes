@@ -5,12 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.navigation.NavigationView
 import com.ksh.daquotes.R
 import com.ksh.daquotes.databinding.ActivityMainpageBinding
@@ -31,13 +35,40 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityMainpageBinding
     private lateinit var mainPageAdapter: MainPageAdapter
-    private var currentQuote: Quote? = null // 현재 페이지의 명언을 저장
+    // 현재 페이지의 명언을 저장
+    private var currentQuote: Quote? = null
+    //광고
+    private val adRequest = AdRequest.Builder().build()
+    //전면 광고 초기화 되었는지
+    private var ads: InterstitialAd? = null
+
+    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (ads != null) {
+                ads?.show(this@MainPageActivity)
+                ads?.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        finish()
+                    }
+                    override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
+                        finish()
+                    }
+                }
+            } else {
+                this.isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+                finish()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.e("확인", "넘어감 현재 MainPage")
         binding = ActivityMainpageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         mainPageAdapter = MainPageAdapter(mutableListOf())
         binding.viewPager.adapter = mainPageAdapter
@@ -68,9 +99,12 @@ class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelec
             }
         })
 
+        //배너 광고 애드몹
         MobileAds.initialize(this)
-        val ads = AdRequest.Builder().build()
-        binding.adView.loadAd(ads)
+        binding.adView.loadAd(adRequest)
+
+        //전면광고 애드몹
+        startAd()
 
         binding.toolbar.ibToolbar.setOnClickListener {
             toggleDrawerLayout(binding.root)
@@ -143,6 +177,19 @@ class MainPageActivity:AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
             override fun onFailure(call: Call<DTO>, t: Throwable) {
                 Log.d("확인용", t.message.toString())
+            }
+        })
+    }
+
+    //전면 광고용 함수
+    private fun startAd() {
+        InterstitialAd.load(this, getString(R.string.ad_testinterstitial), adRequest, object : InterstitialAdLoadCallback() {
+            override fun onAdLoaded(ad: InterstitialAd) {
+                ads = ad
+            }
+
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                ads = null
             }
         })
     }
