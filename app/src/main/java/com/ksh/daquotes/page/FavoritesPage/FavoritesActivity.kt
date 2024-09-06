@@ -1,53 +1,44 @@
 package com.ksh.daquotes
 
-import MainPageAdapter
 import android.content.Intent
 import android.os.Bundle
-import android.provider.LiveFolders.INTENT
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.viewpager2.widget.ViewPager2
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.navigation.NavigationView
-import com.ksh.daquotes.databinding.ActivityMainpageBinding
-import com.ksh.daquotes.utility.DTO
+import com.ksh.daquotes.databinding.ActivityFavoritesBinding
+import com.ksh.daquotes.page.FavoritesPage.FavoritesAdapter
 import com.ksh.daquotes.utility.Quote
-import com.ksh.daquotes.utility.api
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private lateinit var binding: ActivityMainpageBinding
-    private lateinit var mainPageAdapter: MainPageAdapter
+class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    private lateinit var binding: ActivityFavoritesBinding
+    private lateinit var adapter: FavoritesAdapter
     private val adRequest = AdRequest.Builder().build()
-    private var currentQuote: Quote? = null
-    //전면광고 나오는지 안나오는지 여부 확인하는 변수
+    //전면 광고 초기화 되었는지
     private var ads: InterstitialAd? = null
 
-    //뒤로가기 버튼
     private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             if (ads != null) {
                 // 전면 광고가 있을 경우 광고를 먼저 표시
-                ads?.show(this@MainPageActivity)
+                ads?.show(this@FavoritesActivity)
                 ads?.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
                     override fun onAdDismissedFullScreenContent() {
                         // 광고가 닫힌 후 앱 종료
@@ -72,8 +63,9 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainpageBinding.inflate(layoutInflater)
+        binding = ActivityFavoritesBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
 
@@ -83,21 +75,18 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
         binding.navView.setNavigationItemSelectedListener(this)
 
-        mainPageAdapter = MainPageAdapter(mutableListOf())
-        binding.viewPager.adapter = mainPageAdapter
-        binding.viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+        CoroutineScope(Dispatchers.IO).launch {
+            var quote_list: List<Quote> = db.quoteDao().getAll()
+            Log.e("테스트", "db 계속 조회중")
+            withContext(Dispatchers.Main) {
+                adapter = FavoritesAdapter(quote_list)
+                binding.favoritesRecyclerView.layoutManager = GridLayoutManager(this@FavoritesActivity, 2) // 3개의 열
+                binding.favoritesRecyclerView.adapter = adapter
+            }
+        }
 
-
-        //명언 보여주기
-        getQuotes()
-
-        //버튼 그룹
-        buttonGroup()
-
-        //광고 활성화
         MobileAds.initialize(this)
         binding.adView.loadAd(adRequest)
-        //전면광고 활성화
         startAd()
     }
 
@@ -135,80 +124,6 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         } else {
             drawerLayout.closeDrawer(GravityCompat.START)
         }
-    }
-
-    //버튼들 모음 및 뷰페이저 콜백
-    private fun buttonGroup() {
-        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                currentQuote = mainPageAdapter.getQuote(position)
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    val result = db.quoteDao().getSearch(currentQuote?.message)
-                    withContext(Dispatchers.Main) {
-                        if (result != null) {
-                            binding.likeBtn.setImageResource(R.drawable.red_like_icon)
-                        } else {
-                            binding.likeBtn.setImageResource(R.drawable.like_icon)
-                        }
-                    }
-                }
-
-                if (position == mainPageAdapter.itemCount - 1) {
-                    getQuotes()
-                }
-            }
-        })
-
-        binding.shareBtn.setOnClickListener {
-            val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
-            intent.type = "text/plain"
-            intent.putExtra(Intent.EXTRA_TEXT, "daily Quote\n\n${currentQuote?.message}\n- ${currentQuote?.author} -")
-            val chooserTitle = "친구에게 공유하기"
-            startActivity(Intent.createChooser(intent, chooserTitle))
-        }
-
-        binding.likeBtn.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                val result = db.quoteDao().getSearch(currentQuote?.message)
-                if (result != null) {
-                    db.quoteDao().delete(currentQuote?.message)
-                    withContext(Dispatchers.Main) {
-                        binding.likeBtn.setImageResource(R.drawable.like_icon)
-                    }
-                } else {
-                    db.quoteDao().insert(currentQuote!!)
-                    withContext(Dispatchers.Main) {
-                        binding.likeBtn.setImageResource(R.drawable.red_like_icon)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getQuotes() {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://korean-advice-open-api.vercel.app")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val api = retrofit.create(api::class.java)
-
-        api.getQuote().enqueue(object : Callback<DTO> {
-            override fun onResponse(call: Call<DTO>, response: Response<DTO>) {
-                if (response.isSuccessful) {
-                    val quote = Quote(
-                        message = response.body()?.message.toString(),
-                        author = response.body()?.author.toString()
-                    )
-                    mainPageAdapter.addQuote(quote)
-                }
-            }
-
-            override fun onFailure(call: Call<DTO>, t: Throwable) {
-                Log.d("확인용", t.message.toString())
-            }
-        })
     }
 
     private fun startAd() {

@@ -3,15 +3,15 @@ package com.ksh.daquotes.page.FavoritesPage
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.ksh.daquotes.databinding.FavoritesItemBinding
+import com.ksh.daquotes.databinding.ItemFavoritesBinding
 import com.ksh.daquotes.utility.Quote
 
 class FavoritesAdapter(private val quote: List<Quote>) : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder>() {
 
-    class FavoritesViewHolder(val binding: FavoritesItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class FavoritesViewHolder(val binding: ItemFavoritesBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoritesViewHolder {
-        val binding = FavoritesItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemFavoritesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FavoritesViewHolder(binding)
     }
 

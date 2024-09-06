@@ -18,40 +18,18 @@
             layout="@layout/toolbar"
             android:id="@+id/toolbar" />
 
-        <!-- 새로운 프래그먼트를 삽입할 FrameLayout, ViewPager2와 버튼 포함 -->
-        <FrameLayout
-            android:id="@+id/fragment_container"
+        <!-- RecyclerView를 삽입 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favoritesRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:padding="16dp">
-
-            <!-- ViewPager2 -->
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewPager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center" />
-
-            <!-- 좋아요 버튼 -->
-            <ImageButton
-                android:id="@+id/like_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginBottom="36dp"
-                android:src="@drawable/like_icon"
-                android:background="@android:color/transparent" />
-
-            <!-- 공유 버튼 -->
-            <ImageButton
-                android:id="@+id/share_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:src="@drawable/share_icon"
-                android:background="@android:color/transparent" />
-        </FrameLayout>
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:padding="16dp"
+            android:scrollbars="vertical" />
 
         <!-- 광고 영역 유지 -->
         <com.google.android.gms.ads.AdView
