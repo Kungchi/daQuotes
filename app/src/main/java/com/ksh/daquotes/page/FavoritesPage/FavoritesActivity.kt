@@ -3,15 +3,12 @@ package com.ksh.daquotes
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
@@ -80,7 +77,7 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             Log.e("테스트", "db 계속 조회중")
             withContext(Dispatchers.Main) {
                 adapter = FavoritesAdapter(quote_list)
-                binding.favoritesRecyclerView.layoutManager = GridLayoutManager(this@FavoritesActivity, 2) // 3개의 열
+                binding.favoritesRecyclerView.layoutManager = GridLayoutManager(this@FavoritesActivity, 2)
                 binding.favoritesRecyclerView.adapter = adapter
             }
         }
@@ -98,6 +95,7 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     val intent = Intent(this, MainPageActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 }
             }
             R.id.favorite_quote -> {
@@ -105,6 +103,7 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     val intent = Intent(this, FavoritesActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 }
             }
             R.id.quote_challenge -> {

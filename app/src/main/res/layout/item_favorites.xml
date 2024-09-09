@@ -1,14 +1,14 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     card_view:cardCornerRadius="8dp"
     card_view:cardElevation="8dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="8dp"
@@ -19,16 +19,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Item"
-            android:textSize="16sp"
-            android:gravity="center" />
+            android:textSize="@dimen/text_size"
+            android:gravity="center"
+            android:maxLines="3"
+            android:ellipsize="end"/>
 
         <TextView
             android:id="@+id/author_text_favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Item"
-            android:textSize="16sp"
-            android:gravity="center" />
+            android:textSize="@dimen/text_size"
+            android:gravity="center"
+            android:textStyle="bold"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

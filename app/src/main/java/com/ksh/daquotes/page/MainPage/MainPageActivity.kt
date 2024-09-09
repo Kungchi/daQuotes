@@ -109,6 +109,7 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                     val intent = Intent(this, MainPageActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 }
             }
             R.id.favorite_quote -> {
@@ -116,6 +117,7 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                     val intent = Intent(this, FavoritesActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 }
             }
             R.id.quote_challenge -> {
