@@ -3,4 +3,5 @@
     <dimen name="text_size">16sp</dimen>
     <dimen name="main_text_size">25sp</dimen>
     <dimen name="main_author_size">23sp</dimen>
+    <dimen name="image_button_size">24dp</dimen>
 </resources>
