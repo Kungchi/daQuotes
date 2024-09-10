@@ -59,4 +59,12 @@ dependencies {
 
     //애드몹
     implementation("com.google.android.gms:play-services-ads:23.3.0")
+
+    //코루틴
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
+
+
+
 }

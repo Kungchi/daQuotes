@@ -15,6 +15,7 @@
         <item
             android:id="@+id/quote_challenge"
             android:title="명언 챌린지"
-            android:icon="@drawable/challenge_icon"/>
+            android:icon="@drawable/challenge_icon"
+            android:visible="false"/>
         <!-- <a href="https://www.flaticon.com/kr/free-icons/" title="골 아이콘">골 아이콘 제작자: Muhammad Yafinuha - Flaticon</a> -->
 </menu>

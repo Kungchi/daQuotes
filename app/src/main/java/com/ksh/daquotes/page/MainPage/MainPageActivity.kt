@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -21,13 +22,10 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.navigation.NavigationView
 import com.ksh.daquotes.databinding.ActivityMainpageBinding
+import com.ksh.daquotes.page.FavoritesPage.FavoritesViewModel
 import com.ksh.daquotes.utility.DTO
 import com.ksh.daquotes.utility.Quote
 import com.ksh.daquotes.utility.api
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,6 +39,7 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private var currentQuote: Quote? = null
     //전면광고 나오는지 안나오는지 여부 확인하는 변수
     private var ads: InterstitialAd? = null
+    private val viewModel: FavoritesViewModel by viewModels()
 
     //뒤로가기 버튼
     private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -144,18 +143,10 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 currentQuote = mainPageAdapter.getQuote(position)
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    val result = db.quoteDao().getSearch(currentQuote?.message)
-                    withContext(Dispatchers.Main) {
-                        if (result != null) {
-                            binding.likeBtn.setImageResource(R.drawable.red_like_icon)
-                        } else {
-                            binding.likeBtn.setImageResource(R.drawable.like_icon)
-                        }
-                    }
+                viewModel.liveDate.observe(this@MainPageActivity) { quotes ->
+                    val isFavorite = quotes.any { it.message == currentQuote!!.message }
+                    updateImg(isFavorite)
                 }
-
                 if (position == mainPageAdapter.itemCount - 1) {
                     getQuotes()
                 }
@@ -171,20 +162,7 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
 
         binding.likeBtn.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                val result = db.quoteDao().getSearch(currentQuote?.message)
-                if (result != null) {
-                    db.quoteDao().delete(currentQuote?.message)
-                    withContext(Dispatchers.Main) {
-                        binding.likeBtn.setImageResource(R.drawable.like_icon)
-                    }
-                } else {
-                    db.quoteDao().insert(currentQuote!!)
-                    withContext(Dispatchers.Main) {
-                        binding.likeBtn.setImageResource(R.drawable.red_like_icon)
-                    }
-                }
-            }
+            viewModel.add_remove(currentQuote!!)
         }
     }
 
@@ -223,5 +201,16 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 ads = null
             }
         })
+    }
+
+    private fun updateImg(isFavorite: Boolean) {
+        binding.likeBtn.setImageResource(
+            if (isFavorite) R.drawable.red_like_icon else R.drawable.like_icon
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.load()
     }
 }

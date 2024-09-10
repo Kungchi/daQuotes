@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -18,15 +19,12 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.navigation.NavigationView
 import com.ksh.daquotes.databinding.ActivityFavoritesBinding
 import com.ksh.daquotes.page.FavoritesPage.FavoritesAdapter
-import com.ksh.daquotes.utility.Quote
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.ksh.daquotes.page.FavoritesPage.FavoritesViewModel
 
 class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityFavoritesBinding
     private lateinit var adapter: FavoritesAdapter
+    private val viewModel: FavoritesViewModel by viewModels()
     private val adRequest = AdRequest.Builder().build()
     //전면 광고 초기화 되었는지
     private var ads: InterstitialAd? = null
@@ -56,8 +54,6 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFavoritesBinding.inflate(layoutInflater)
@@ -72,14 +68,11 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
         binding.navView.setNavigationItemSelectedListener(this)
 
-        CoroutineScope(Dispatchers.IO).launch {
-            var quote_list: List<Quote> = db.quoteDao().getAll()
-            Log.e("테스트", "db 계속 조회중")
-            withContext(Dispatchers.Main) {
-                adapter = FavoritesAdapter(quote_list)
-                binding.favoritesRecyclerView.layoutManager = GridLayoutManager(this@FavoritesActivity, 2)
-                binding.favoritesRecyclerView.adapter = adapter
-            }
+        viewModel.liveDate.observe(this) { quotes ->
+            Log.d("확인용", quotes.size.toString())
+            adapter = FavoritesAdapter(quotes)
+            binding.favoritesRecyclerView.layoutManager = GridLayoutManager(this@FavoritesActivity, 2)
+            binding.favoritesRecyclerView.adapter = adapter
         }
 
         MobileAds.initialize(this)
@@ -135,5 +128,10 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 ads = null
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.load()
     }
 }
