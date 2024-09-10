@@ -1,5 +1,6 @@
 package com.ksh.daquotes.page.DetailPage
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -36,12 +37,20 @@ class DetailActivity : AppCompatActivity() {
             updateImg(isFavorite)
         }
 
+        binding.quoteText.text = quoteText
+        binding.authorText.text = quoteAuthor
+
         binding.likeBtn.setOnClickListener {
             viewModel.add_remove(currentQuote)
         }
 
-        binding.quoteText.text = quoteText
-        binding.authorText.text = quoteAuthor
+        binding.shareBtn.setOnClickListener {
+            val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, "daily Quote\n\n${currentQuote?.message}\n- ${currentQuote?.author} -")
+            val chooserTitle = "친구에게 공유하기"
+            startActivity(Intent.createChooser(intent, chooserTitle))
+        }
     }
 
     private fun updateImg(isFavorite: Boolean) {
