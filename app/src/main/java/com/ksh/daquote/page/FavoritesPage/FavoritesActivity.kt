@@ -119,7 +119,7 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun startAd() {
-        InterstitialAd.load(this, getString(R.string.ad_interstitial), adRequest, object : InterstitialAdLoadCallback() {
+        InterstitialAd.load(this, getString(R.string.ad_testinterstitial), adRequest, object : InterstitialAdLoadCallback() {
             override fun onAdLoaded(ad: InterstitialAd) {
                 ads = ad
             }
