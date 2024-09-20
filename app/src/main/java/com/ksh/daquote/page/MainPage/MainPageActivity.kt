@@ -1,5 +1,6 @@
-package com.ksh.daquotes
+package com.ksh.daquote
 
+import MainPageAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,30 +11,39 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.navigation.NavigationView
-import com.ksh.daquotes.databinding.ActivityFavoritesBinding
-import com.ksh.daquotes.page.FavoritesPage.FavoritesAdapter
-import com.ksh.daquotes.page.FavoritesPage.FavoritesViewModel
+import com.ksh.daquote.databinding.ActivityMainpageBinding
+import com.ksh.daquote.page.FavoritesPage.FavoritesViewModel
+import com.ksh.daquote.utility.DTO
+import com.ksh.daquote.utility.Quote
+import com.ksh.daquote.utility.api
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
-class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private lateinit var binding: ActivityFavoritesBinding
-    private lateinit var adapter: FavoritesAdapter
-    private val viewModel: FavoritesViewModel by viewModels()
+class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    private lateinit var binding: ActivityMainpageBinding
+    private lateinit var mainPageAdapter: MainPageAdapter
     private val adRequest = AdRequest.Builder().build()
-    //전면 광고 초기화 되었는지
+    private var currentQuote: Quote? = null
+    //전면광고 나오는지 안나오는지 여부 확인하는 변수
     private var ads: InterstitialAd? = null
+    private val viewModel: FavoritesViewModel by viewModels()
 
+    //뒤로가기 버튼
     private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             if (ads != null) {
                 // 전면 광고가 있을 경우 광고를 먼저 표시
-                ads?.show(this@FavoritesActivity)
+                ads?.show(this@MainPageActivity)
                 ads?.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
                     override fun onAdDismissedFullScreenContent() {
                         // 광고가 닫힌 후 앱 종료
@@ -54,11 +64,12 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityFavoritesBinding.inflate(layoutInflater)
+        binding = ActivityMainpageBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
 
@@ -68,15 +79,21 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
         binding.navView.setNavigationItemSelectedListener(this)
 
-        viewModel.liveDate.observe(this) { quotes ->
-            Log.d("확인용", quotes.size.toString())
-            adapter = FavoritesAdapter(quotes)
-            binding.favoritesRecyclerView.layoutManager = GridLayoutManager(this@FavoritesActivity, 2)
-            binding.favoritesRecyclerView.adapter = adapter
-        }
+        mainPageAdapter = MainPageAdapter(mutableListOf())
+        binding.viewPager.adapter = mainPageAdapter
+        binding.viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
 
+
+        //명언 보여주기
+        getQuotes()
+
+        //버튼 그룹
+        buttonGroup()
+
+        //광고 활성화
         MobileAds.initialize(this)
         binding.adView.loadAd(adRequest)
+        //전면광고 활성화
         startAd()
     }
 
@@ -118,8 +135,61 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
+    //버튼들 모음 및 뷰페이저 콜백
+    private fun buttonGroup() {
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                currentQuote = mainPageAdapter.getQuote(position)
+                viewModel.liveDate.observe(this@MainPageActivity) { quotes ->
+                    val isFavorite = quotes.any { it.message == currentQuote!!.message }
+                    updateImg(isFavorite)
+                }
+                if (position == mainPageAdapter.itemCount - 1) {
+                    getQuotes()
+                }
+            }
+        })
+
+        binding.shareBtn.setOnClickListener {
+            val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, "daily Quote\n\n${currentQuote?.message}\n- ${currentQuote?.author} -")
+            val chooserTitle = "친구에게 공유하기"
+            startActivity(Intent.createChooser(intent, chooserTitle))
+        }
+
+        binding.likeBtn.setOnClickListener {
+            viewModel.add_remove(currentQuote!!)
+        }
+    }
+
+    private fun getQuotes() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://korean-advice-open-api.vercel.app")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val api = retrofit.create(api::class.java)
+
+        api.getQuote().enqueue(object : Callback<DTO> {
+            override fun onResponse(call: Call<DTO>, response: Response<DTO>) {
+                if (response.isSuccessful) {
+                    val quote = Quote(
+                        message = response.body()?.message.toString(),
+                        author = response.body()?.author.toString()
+                    )
+                    mainPageAdapter.addQuote(quote)
+                }
+            }
+
+            override fun onFailure(call: Call<DTO>, t: Throwable) {
+                Log.d("확인용", t.message.toString())
+            }
+        })
+    }
+
     private fun startAd() {
-        InterstitialAd.load(this, getString(R.string.ad_testinterstitial), adRequest, object : InterstitialAdLoadCallback() {
+        InterstitialAd.load(this, getString(R.string.ad_interstitial), adRequest, object : InterstitialAdLoadCallback() {
             override fun onAdLoaded(ad: InterstitialAd) {
                 ads = ad
             }
@@ -128,6 +198,12 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 ads = null
             }
         })
+    }
+
+    private fun updateImg(isFavorite: Boolean) {
+        binding.likeBtn.setImageResource(
+            if (isFavorite) R.drawable.red_like_icon else R.drawable.like_icon
+        )
     }
 
     override fun onResume() {

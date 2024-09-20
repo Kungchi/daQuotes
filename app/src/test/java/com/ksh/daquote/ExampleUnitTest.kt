@@ -1,4 +1,4 @@
-package com.ksh.daquotes
+package com.ksh.daquote
 
 import org.junit.Test
 

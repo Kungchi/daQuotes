@@ -1,14 +1,14 @@
-package com.ksh.daquotes.page.DetailPage
+package com.ksh.daquote.page.DetailPage
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.ksh.daquotes.R
-import com.ksh.daquotes.databinding.ActivityDetailBinding
-import com.ksh.daquotes.page.FavoritesPage.FavoritesViewModel
-import com.ksh.daquotes.utility.Quote
+import com.ksh.daquote.R
+import com.ksh.daquote.databinding.ActivityDetailBinding
+import com.ksh.daquote.page.FavoritesPage.FavoritesViewModel
+import com.ksh.daquote.utility.Quote
 
 class DetailActivity : AppCompatActivity() {
     private lateinit var binding : ActivityDetailBinding

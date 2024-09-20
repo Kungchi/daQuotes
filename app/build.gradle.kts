@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.ksh.daquotes"
+    namespace = "com.ksh.daquote"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.ksh.daquotes"
+        applicationId = "com.ksh.daquote"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

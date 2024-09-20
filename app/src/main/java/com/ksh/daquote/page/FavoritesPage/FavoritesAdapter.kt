@@ -1,14 +1,14 @@
-package com.ksh.daquotes.page.FavoritesPage
+package com.ksh.daquote.page.FavoritesPage
 
 import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.ksh.daquotes.R
-import com.ksh.daquotes.databinding.ItemFavoritesBinding
-import com.ksh.daquotes.page.DetailPage.DetailActivity
-import com.ksh.daquotes.utility.Quote
+import com.ksh.daquote.R
+import com.ksh.daquote.databinding.ItemFavoritesBinding
+import com.ksh.daquote.page.DetailPage.DetailActivity
+import com.ksh.daquote.utility.Quote
 
 class FavoritesAdapter(private val quote: List<Quote>) : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder>() {
 

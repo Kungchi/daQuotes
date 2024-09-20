@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:adSize="BANNER"
-            app:adUnitId="@string/ad_testbanner" />
+            app:adUnitId="@string/ad_banner" />
     </LinearLayout>
 
     <!-- 네비게이션 메뉴 -->

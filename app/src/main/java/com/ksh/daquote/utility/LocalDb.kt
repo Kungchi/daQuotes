@@ -1,9 +1,8 @@
-package com.ksh.daquotes.utility
+package com.ksh.daquote.utility
 
 import androidx.room.*
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 
+//로컬DB에 저장하기위한 data class 생성
 @Entity
 data class Quote(
     @PrimaryKey(autoGenerate = true) val id: Long = 0, // 기본값 0
@@ -11,6 +10,7 @@ data class Quote(
     @ColumnInfo(name = "author") val author: String?
 )
 
+//쿼리를 사용하기위한 interface 선언
 @Dao
 interface QuoteDao {
     @Query("SELECT * FROM Quote")
@@ -23,6 +23,7 @@ interface QuoteDao {
     suspend fun insert(quote: Quote): Long
 }
 
+//Room Database 설정
 @Database(entities = [Quote::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun quoteDao(): QuoteDao

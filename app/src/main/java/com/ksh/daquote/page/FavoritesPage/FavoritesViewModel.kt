@@ -1,11 +1,11 @@
-package com.ksh.daquotes.page.FavoritesPage
+package com.ksh.daquote.page.FavoritesPage
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ksh.daquotes.db
-import com.ksh.daquotes.utility.Quote
+import com.ksh.daquote.db
+import com.ksh.daquote.utility.Quote
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

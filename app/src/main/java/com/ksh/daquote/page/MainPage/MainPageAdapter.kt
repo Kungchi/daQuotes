@@ -1,8 +1,8 @@
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.ksh.daquotes.databinding.ItemMainpageBinding
-import com.ksh.daquotes.utility.Quote
+import com.ksh.daquote.databinding.ItemMainpageBinding
+import com.ksh.daquote.utility.Quote
 
 class MainPageAdapter(private var quoteList: MutableList<Quote>) : RecyclerView.Adapter<MainPageAdapter.ViewHolder>() {
 
