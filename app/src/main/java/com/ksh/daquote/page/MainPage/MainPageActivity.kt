@@ -38,40 +38,10 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private var ads: InterstitialAd? = null
     private val viewModel: FavoritesViewModel by viewModels()
 
-    //뒤로가기 버튼
-    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            if (ads != null) {
-                // 전면 광고가 있을 경우 광고를 먼저 표시
-                ads?.show(this@MainPageActivity)
-                ads?.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
-                    override fun onAdDismissedFullScreenContent() {
-                        // 광고가 닫힌 후 앱 종료
-                        finishAffinity() // 안전하게 앱 종료
-                    }
-
-                    override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
-                        // 광고 표시가 실패하면 앱 종료
-                        finishAffinity() // 안전하게 앱 종료
-                    }
-                }
-            } else {
-                // 광고가 없을 경우 바로 앱 종료
-                this.isEnabled = false
-                onBackPressedDispatcher.onBackPressed()
-                finishAffinity() // 안전하게 앱 종료
-            }
-        }
-    }
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainpageBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
-
 
         // 사이드바 및 버튼 설정
         binding.toolbar.ibToolbar.setOnClickListener {
@@ -112,8 +82,24 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 if (javaClass != FavoritesActivity::class.java) {
                     val intent = Intent(this, FavoritesActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    startActivity(intent)
-                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                    if (ads != null) {
+                        // 전면 광고가 있을 경우 광고를 먼저 표시
+                        ads?.show(this@MainPageActivity)
+                        ads?.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                startActivity(intent)
+                                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                            }
+
+                            override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
+                                startActivity(intent)
+                                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                            }
+                        }
+                    } else {
+                        startActivity(intent)
+                        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                    }
                 }
             }
             R.id.quote_challenge -> {

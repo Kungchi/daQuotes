@@ -5,17 +5,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.navigation.NavigationView
 import com.ksh.daquote.databinding.ActivityFavoritesBinding
 import com.ksh.daquote.page.FavoritesPage.FavoritesAdapter
@@ -26,41 +22,11 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var adapter: FavoritesAdapter
     private val viewModel: FavoritesViewModel by viewModels()
     private val adRequest = AdRequest.Builder().build()
-    //전면 광고 초기화 되었는지
-    private var ads: InterstitialAd? = null
-
-    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            if (ads != null) {
-                // 전면 광고가 있을 경우 광고를 먼저 표시
-                ads?.show(this@FavoritesActivity)
-                ads?.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
-                    override fun onAdDismissedFullScreenContent() {
-                        // 광고가 닫힌 후 앱 종료
-                        finishAffinity() // 안전하게 앱 종료
-                    }
-
-                    override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
-                        // 광고 표시가 실패하면 앱 종료
-                        finishAffinity() // 안전하게 앱 종료
-                    }
-                }
-            } else {
-                // 광고가 없을 경우 바로 앱 종료
-                this.isEnabled = false
-                onBackPressedDispatcher.onBackPressed()
-                finishAffinity() // 안전하게 앱 종료
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFavoritesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
-
 
         // 사이드바 및 버튼 설정
         binding.toolbar.ibToolbar.setOnClickListener {
@@ -77,7 +43,6 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         MobileAds.initialize(this)
         binding.adView.loadAd(adRequest)
-        startAd()
     }
 
     //메뉴버튼 작동
@@ -116,18 +81,6 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         } else {
             drawerLayout.closeDrawer(GravityCompat.START)
         }
-    }
-
-    private fun startAd() {
-        InterstitialAd.load(this, getString(R.string.ad_testinterstitial), adRequest, object : InterstitialAdLoadCallback() {
-            override fun onAdLoaded(ad: InterstitialAd) {
-                ads = ad
-            }
-
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                ads = null
-            }
-        })
     }
 
     override fun onResume() {
