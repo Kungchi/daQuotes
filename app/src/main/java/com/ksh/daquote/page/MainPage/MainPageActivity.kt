@@ -6,17 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.navigation.NavigationView
 import com.ksh.daquote.databinding.ActivityMainpageBinding
 import com.ksh.daquote.page.FavoritesPage.FavoritesViewModel
@@ -32,10 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityMainpageBinding
     private lateinit var mainPageAdapter: MainPageAdapter
-    private val adRequest = AdRequest.Builder().build()
     private var currentQuote: Quote? = null
-    //전면광고 나오는지 안나오는지 여부 확인하는 변수
-    private var ads: InterstitialAd? = null
     private val viewModel: FavoritesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,12 +50,6 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         //버튼 그룹
         buttonGroup()
-
-        //광고 활성화
-        MobileAds.initialize(this)
-        binding.adView.loadAd(adRequest)
-        //전면광고 활성화
-        startAd()
     }
 
     //메뉴버튼 작동
@@ -82,24 +67,8 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 if (javaClass != FavoritesActivity::class.java) {
                     val intent = Intent(this, FavoritesActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    if (ads != null) {
-                        // 전면 광고가 있을 경우 광고를 먼저 표시
-                        ads?.show(this@MainPageActivity)
-                        ads?.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
-                            override fun onAdDismissedFullScreenContent() {
-                                startActivity(intent)
-                                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-                            }
-
-                            override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
-                                startActivity(intent)
-                                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-                            }
-                        }
-                    } else {
-                        startActivity(intent)
-                        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-                    }
+                    startActivity(intent)
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 }
             }
             R.id.quote_challenge -> {
@@ -170,18 +139,6 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
             override fun onFailure(call: Call<DTO>, t: Throwable) {
                 Log.d("확인용", t.message.toString())
-            }
-        })
-    }
-
-    private fun startAd() {
-        InterstitialAd.load(this, getString(R.string.ad_testinterstitial), adRequest, object : InterstitialAdLoadCallback() {
-            override fun onAdLoaded(ad: InterstitialAd) {
-                ads = ad
-            }
-
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                ads = null
             }
         })
     }

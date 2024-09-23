@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.MobileAds
 import com.google.android.material.navigation.NavigationView
 import com.ksh.daquote.databinding.ActivityFavoritesBinding
 import com.ksh.daquote.page.FavoritesPage.FavoritesAdapter
@@ -21,7 +19,6 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var binding: ActivityFavoritesBinding
     private lateinit var adapter: FavoritesAdapter
     private val viewModel: FavoritesViewModel by viewModels()
-    private val adRequest = AdRequest.Builder().build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +37,6 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             binding.favoritesRecyclerView.layoutManager = GridLayoutManager(this@FavoritesActivity, 2)
             binding.favoritesRecyclerView.adapter = adapter
         }
-
-        MobileAds.initialize(this)
-        binding.adView.loadAd(adRequest)
     }
 
     //메뉴버튼 작동
