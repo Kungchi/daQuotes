@@ -31,10 +31,10 @@ daQuotes - 일일 명언 (Daily Quotes)
    - 명언들을 볼 수 있는 메인 페이지
    - Main page where you can view quotes
 
-5. **[즐겨찾기 페이지 (Favorites Page)]()**
+5. **[즐겨찾기 페이지 (Favorites Page)](https://github.com/Kungchi/daQuotes/wiki/%EC%A6%90%EA%B2%A8%EC%B0%BE%EA%B8%B0-%ED%8E%98%EC%9D%B4%EC%A7%80)**
    - 사용자가 메인 페이지에서 즐겨찾기한 명언을 모아보는 페이지
    - Page to view all quotes favorited by the user from the main page
 
-6. **[상세 페이지 (Detail Page)]()**
+6. **[상세 페이지 (Detail Page)](https://github.com/Kungchi/daQuotes/wiki/%EC%83%81%EC%84%B8-%ED%8E%98%EC%9D%B4%EC%A7%80)**
    - 즐겨찾기 페이지에서 아이템 클릭 시 보여지는 상세 페이지
    - Detail page displayed when an item is clicked on the favorites page
