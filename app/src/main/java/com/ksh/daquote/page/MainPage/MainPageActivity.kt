@@ -11,12 +11,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.navigation.NavigationView
 import com.ksh.daquote.databinding.ActivityMainpageBinding
 import com.ksh.daquote.page.FavoritesPage.FavoritesViewModel
 import com.ksh.daquote.utility.DTO
 import com.ksh.daquote.utility.Quote
 import com.ksh.daquote.utility.api
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,11 +36,17 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private lateinit var mainPageAdapter: MainPageAdapter
     private var currentQuote: Quote? = null
     private val viewModel: FavoritesViewModel by viewModels()
+    private var mInterstitialAd: InterstitialAd? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainpageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val backgroundScope = CoroutineScope(Dispatchers.IO)
+        backgroundScope.launch {
+            MobileAds.initialize(this@MainPageActivity) {}
+        }
 
         // 사이드바 및 버튼 설정
         binding.toolbar.ibToolbar.setOnClickListener {
@@ -50,6 +64,22 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         //버튼 그룹
         buttonGroup()
+
+        val adView = binding.adView
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
+
+        InterstitialAd.load(this,resources.getString(R.string.ad_interstitial), adRequest, object : InterstitialAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                Log.d("애드몹 광고", adError.toString())
+                mInterstitialAd = null
+            }
+
+            override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                Log.d("애드몹 광고", "Ad was loaded.")
+                mInterstitialAd = interstitialAd
+            }
+        })
     }
 
     //메뉴버튼 작동
@@ -69,6 +99,11 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                     intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
                     overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                    if (mInterstitialAd != null) {
+                        mInterstitialAd?.show(this)
+                    } else {
+                        Log.d("TAG", "The interstitial ad wasn't ready yet.")
+                    }
                 }
             }
             R.id.quote_challenge -> {

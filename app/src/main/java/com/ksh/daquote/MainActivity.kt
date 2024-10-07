@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
             applicationContext,
             AppDatabase::class.java, "quotes-db"
         ).build()
+
         //메인 페이지 액티비티 시작
         val intent = Intent(this, MainPageActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

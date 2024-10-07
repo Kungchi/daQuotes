@@ -31,6 +31,10 @@
                   android:launchMode="singleTask"/>
         <activity android:name=".page.DetailPage.DetailActivity"
             android:launchMode="singleTask"/>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/ad_ID"/>
     </application>
 
 </manifest>

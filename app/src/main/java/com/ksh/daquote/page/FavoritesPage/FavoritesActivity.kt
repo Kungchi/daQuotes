@@ -10,10 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.navigation.NavigationView
 import com.ksh.daquote.databinding.ActivityFavoritesBinding
 import com.ksh.daquote.page.FavoritesPage.FavoritesAdapter
 import com.ksh.daquote.page.FavoritesPage.FavoritesViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityFavoritesBinding
@@ -37,6 +42,15 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             binding.favoritesRecyclerView.layoutManager = GridLayoutManager(this@FavoritesActivity, 2)
             binding.favoritesRecyclerView.adapter = adapter
         }
+
+        val backgroundScope = CoroutineScope(Dispatchers.IO)
+        backgroundScope.launch {
+            MobileAds.initialize(this@FavoritesActivity) {}
+        }
+
+        val adView = binding.adView
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
     }
 
     //메뉴버튼 작동

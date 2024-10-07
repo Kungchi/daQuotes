@@ -3,6 +3,7 @@
 
 ### Android ###
 # Gradle files
+app/src/main/res/values/strings.xml
 .gradle/
 build/
 
