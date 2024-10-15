@@ -43,11 +43,6 @@ class FavoritesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             binding.favoritesRecyclerView.adapter = adapter
         }
 
-        val backgroundScope = CoroutineScope(Dispatchers.IO)
-        backgroundScope.launch {
-            MobileAds.initialize(this@FavoritesActivity) {}
-        }
-
         val adView = binding.adView
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)

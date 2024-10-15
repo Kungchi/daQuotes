@@ -22,9 +22,6 @@ import com.ksh.daquote.page.FavoritesPage.FavoritesViewModel
 import com.ksh.daquote.utility.DTO
 import com.ksh.daquote.utility.Quote
 import com.ksh.daquote.utility.api
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,11 +39,6 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         super.onCreate(savedInstanceState)
         binding = ActivityMainpageBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val backgroundScope = CoroutineScope(Dispatchers.IO)
-        backgroundScope.launch {
-            MobileAds.initialize(this@MainPageActivity) {}
-        }
 
         // 사이드바 및 버튼 설정
         binding.toolbar.ibToolbar.setOnClickListener {
@@ -69,7 +61,8 @@ class MainPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
 
-        InterstitialAd.load(this,resources.getString(R.string.ad_interstitial), adRequest, object : InterstitialAdLoadCallback() {
+//        InterstitialAd.load(this,resources.getString(R.string.ad_interstitial), adRequest, object : InterstitialAdLoadCallback() {
+        InterstitialAd.load(this,resources.getString(R.string.ad_testinterstitial), adRequest, object : InterstitialAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 Log.d("애드몹 광고", adError.toString())
                 mInterstitialAd = null

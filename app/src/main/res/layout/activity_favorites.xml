@@ -40,7 +40,7 @@
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             ads:adSize="BANNER"
-            ads:adUnitId="@string/ad_banner">
+            ads:adUnitId="@string/ad_testbanner"> <!-- @string/ad_banner  @string/ad_testbanner -->
         </com.google.android.gms.ads.AdView>
     </LinearLayout>
 
